@@ -2,6 +2,21 @@ async function getPage(url) {
     const response = await fetch(url)
     if (response.status == 200) {
         let output = await response.json()
+        console.log(output)
+        return output
+    } else {
+        throw Error
+    }
+}
+
+async function postPage(url, params) {
+    const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(params)
+    })
+    if (response.status == 200) {
+        let output = await response.json()
+        console.log(output)
         return output
     } else {
         throw Error
@@ -35,4 +50,4 @@ async function getAllPages(url, ppr) {
     return data
 }
 
-export { getPage, getAllPages }
+export { getPage, getAllPages, postPage }

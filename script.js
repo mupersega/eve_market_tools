@@ -1,4 +1,5 @@
 import { getMarketOrders } from "./api_market.js"
+import { getTypeIdFromTypeName } from "./api_universe.js"
 
 const region_id = 10000002
 const order_type = "all"
@@ -11,9 +12,21 @@ const display = document.querySelector("#search-results")
 // LISTENERS
 searchButton.addEventListener("click", (event) => {
     event.preventDefault()
-    getMarketOrders(region_id, order_type, typeId.value).then((response) => {
-        buildResults(response)
+    getTypeIdFromTypeName(typeName.value)
+    .then((typeId) => {
+        getMarketOrders(region_id, order_type, typeId).then((response) => {
+            buildResults(response)
+        })
+    }).catch((err) => {
+        switch (err.message) {
+            case "typeInfo.inventory_types is undefined":
+                showUnfoundError()
+                break;
+            default:
+                break;
+        }
     })
+    
 })
 
 // FUNCTIONS
@@ -26,4 +39,10 @@ function buildResults(data) {
         `
         display.appendChild(tr)
     }
+}
+
+function showUnfoundError() {
+    let errorMessage = document.createElement("p")
+    errorMessage.innerHTML = 'Item not found, please check spelling.'
+    document.querySelector("body").appendChild(errorMessage)
 }
